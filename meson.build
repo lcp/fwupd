@@ -191,6 +191,11 @@ if get_option('plugin_colorhug')
   conf.set('HAVE_COLORHUG', '1')
 endif
 
+if get_option('plugin_redfish')
+  json_glib = dependency('json-glib-1.0')
+  efivar = dependency('efivar')
+endif
+
 if get_option('plugin_altos')
   libelf = dependency('libelf')
 endif
