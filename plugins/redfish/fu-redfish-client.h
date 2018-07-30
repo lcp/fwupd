@@ -26,6 +26,10 @@ void		 fu_redfish_client_set_password	(FuRedfishClient	*self,
 						 const gchar		*password);
 void		 fu_redfish_client_set_port	(FuRedfishClient	*self,
 						 guint			 port);
+gboolean	 fu_redfish_client_update       (FuRedfishClient	*self,
+						 FuDevice		*device,
+						 GBytes			*blob_fw,
+						 GError			**error);
 gboolean	 fu_redfish_client_setup	(FuRedfishClient	*self,
 						 GBytes			*smbios_table,
 						 GError			**error);
