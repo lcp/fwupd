@@ -39,11 +39,13 @@ fu_plugin_startup (FuPlugin *plugin, GError **error)
 {
 	FuPluginData *data = fu_plugin_get_data (plugin);
 	GBytes *smbios_data = fu_plugin_get_smbios_data (plugin, REDFISH_SMBIOS_TABLE_TYPE);
-	const gchar *redfish_uri;
+	g_autofree gchar *redfish_uri = NULL;
 
-	/* using the emulator */
-	redfish_uri = g_getenv ("FWUPD_REDFISH_URI");
+	/* Read the conf file */
+	redfish_uri = fu_plugin_get_config_value (plugin, "RedfishUri");
 	if (redfish_uri != NULL) {
+		g_autofree gchar *username;
+		g_autofree gchar *password;
 		guint64 port;
 		g_auto(GStrv) split = g_strsplit (redfish_uri, ":", 2);
 		fu_redfish_client_set_hostname (data->client, split[0]);
@@ -56,6 +58,13 @@ fu_plugin_startup (FuPlugin *plugin, GError **error)
 			return FALSE;
 		}
 		fu_redfish_client_set_port (data->client, port);
+
+		username = fu_plugin_get_config_value (plugin, "Username");
+		password = fu_plugin_get_config_value (plugin, "Password");
+		if (username != NULL && password != NULL) {
+			fu_redfish_client_set_username (data->client, username);
+			fu_redfish_client_set_password (data->client, password);
+		}
 	} else {
 		if (smbios_data == NULL) {
 			g_set_error_literal (error,
